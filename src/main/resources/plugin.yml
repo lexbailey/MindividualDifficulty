@@ -1,0 +1,7 @@
+name: MindividualDifficulty
+main: com.mindividual.plugin.Plugin
+version: ${version}
+commands:
+  mydifficulty:
+    description: Sets your personal difficulty level. While you are playing, the difficulty level will never be more than your personal difficulty level.
+    usage: "Usage: '/mydifficulty <level>'"
