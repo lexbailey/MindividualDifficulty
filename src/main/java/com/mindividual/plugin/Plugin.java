@@ -110,7 +110,6 @@ public class Plugin extends JavaPlugin {
         if (online.size() > 0){
             String defaultMin = difficulties.getProperty("min", "easy"); 
             int newLevel = 4;
-            World w = null;
             for (Player p: online){
                 getLogger().info( "Check level for " + p.getName() );
                 int playerMax = diffStringToInt(difficulties.getProperty("player_" + p.getName(), defaultMin));
@@ -120,16 +119,24 @@ public class Plugin extends JavaPlugin {
                 else{
                     newLevel = Math.min(playerMax, newLevel);
                 }
-                w = p.getWorld(); // Lazy hacky way to get a reference to 'the' world
             }
             getLogger().info( "New difficulty level is " + intToDiffString(newLevel) );
-            if (w != null){
-                w.setDifficulty(intToDifficulty(newLevel));
-                Bukkit.broadcastMessage("Difficulty setting is now '" + intToDiffString(newLevel) + "'");
+            boolean success = true;
+            for (Player p: online){
+                World w = p.getWorld();
+                if (w != null){
+                    w.setDifficulty(intToDifficulty(newLevel));
+                }
+                else{
+                    success = false;
+                }
             }
-            else{
+            if (!success){
                 getLogger().severe("Failed to set difficulty, player in invalid world");
                 Bukkit.broadcastMessage("Error updating difficulty setting.");
+            }
+            else{
+                Bukkit.broadcastMessage("Difficulty setting is now '" + intToDiffString(newLevel) + "'");
             }
         }
     }
