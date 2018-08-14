@@ -109,6 +109,7 @@ public class Plugin extends JavaPlugin {
         Collection<? extends Player> online = Bukkit.getOnlinePlayers();
         if (online.size() > 0){
             String defaultMin = difficulties.getProperty("min", "easy"); 
+            int serverMin = diffStringToInt(defaultMin);
             int newLevel = 4;
             for (Player p: online){
                 getLogger().info( "Check level for " + p.getName() );
@@ -117,7 +118,13 @@ public class Plugin extends JavaPlugin {
                     p.sendMessage("Warning! Your difficulty settings is corrupt. Update it with the /mydifficulty command.");
                 }
                 else{
-                    newLevel = Math.min(playerMax, newLevel);
+                    if (playerMax < serverMin){
+                        p.sendMessage("Your current preference is below the server minimum. Using '" + defaultMin + "' as your preference instead.");
+                        newLevel = Math.min(serverMin, newLevel);
+                    }
+                    else{
+                        newLevel = Math.min(playerMax, newLevel);
+                    }
                 }
             }
             getLogger().info( "New difficulty level is " + intToDiffString(newLevel) );
